@@ -42,13 +42,19 @@ class _State(object):
 
     @staticmethod
     def _go_up():
-        _logger.info('Powering on!')
-        _TV.power_on()
+        if _TV.is_on():
+            _logger.info('Already on')
+        else:
+            _logger.info('Powering on!')
+            _TV.power_on()
     
     @staticmethod
     def _go_down():
-        _logger.info('Standing by!')
-        _TV.standby()
+        if _TV.is_on():
+            _logger.info('Standing by!')
+            _TV.standby()
+        else:
+            _logger.info('Already off')
 
     def __call__(self, new_state: bool):
         _logger.debug(f'current state {self.state}, counter {self.count}, new {new_state}')
