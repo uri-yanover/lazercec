@@ -47,6 +47,9 @@ class _State(object):
         else:
             _logger.info('Powering on!')
             _TV.power_on()
+        result = subprocess.run('echo tx 1F:82:20:00 | cec-client -s', stderr=subprocess.STDOUT, shell=True)
+        print('cec client switch to screen 1', result.stdout)
+
     
     @staticmethod
     def _go_down():

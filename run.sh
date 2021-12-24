@@ -10,5 +10,9 @@ date 2>&1
 date 1>&2
 # TODO: move into the Python
 echo 'is' | cec-client -s
+
+trap "{ pkill -f '${OWN_PATH}' }" SIGINT SIGTERM SIGKILL
+
 python3 "${OWN_PATH}/main.py" -v DEBUG --configuration "${OWN_PATH}/config.json"
+
 exit $?
