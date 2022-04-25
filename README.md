@@ -28,6 +28,7 @@ line=${line#/usr/lib/arm-linux-gnueabihf/}
 ln -s "$line" "${line%.0}"
 done
 
+cd /tmp
 curl https://archive.raspberrypi.org/debian/pool/main/libc/libcec/libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb -o libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb  
-sudo dpkg -i curl libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb
+sudo dpkg -i libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb
 ```

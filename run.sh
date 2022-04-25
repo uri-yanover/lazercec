@@ -11,7 +11,11 @@ date 1>&2
 # TODO: move into the Python
 echo 'is' | cec-client -s
 
-trap "{ pkill -f '${OWN_PATH}' }" SIGINT SIGTERM SIGKILL
+KILL_COMMAND="pkill -f '${OWN_PATH}'/main.py"
+
+bash -c "${KILL_COMMAND}" || /bin/true
+
+trap "{ ${KILL_COMMAND} }" SIGINT SIGTERM SIGKILL
 
 python3 "${OWN_PATH}/main.py" -v DEBUG --configuration "${OWN_PATH}/config.json"
 
