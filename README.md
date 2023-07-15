@@ -29,6 +29,13 @@ ln -s "$line" "${line%.0}"
 done
 
 cd /tmp
-curl https://archive.raspberrypi.org/debian/pool/main/libc/libcec/libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb -o libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb  
-sudo dpkg -i libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb
+
+for file in \
+	https://archive.raspberrypi.org/debian/pool/main/libc/libcec/libcec4_4.0.7+dfsg1-1+rpt2_armhf.deb \
+	https://archive.raspberrypi.org/debian/pool/main/libc/libcec/libcec-dev_4.0.7+dfsg1-1+rpt2_armhf.deb \ 
+	https://archive.raspberrypi.org/debian/pool/main/libc/libcec/cec-utils_4.0.7+dfsg1-1+rpt2_armhf.deb \
+	; do
+	curl $file -o "$(basename "$file")"
+	sudo dpkg -i "$(basename "$file")"
+done
 ```
