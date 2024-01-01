@@ -1,5 +1,7 @@
 #!/bin/bash
 
+OWN_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 KILL_SCREAM_SHELL_COMMAND='echo "Killing scream"; pgrep scream | xargs -r kill'
 trap "bash -c '${KILL_SCREAM_SHELL_COMMAND}'" TERM
 # EXIT HUP INT QUIT ABRT KILL TERM
