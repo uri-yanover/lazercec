@@ -2,12 +2,14 @@
 
 OWN_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-KILL_SCREAM_SHELL_COMMAND='echo "Killing scream"; pgrep scream | xargs -r kill'
+EXECUTABLE="${OWN_DIR}/scream/Receivers/unix/build/scream"
+
+KILL_SCREAM_SHELL_COMMAND='echo "Killing scream" && pkill -KILL -f '"'^${EXECUTABLE}'"
 trap "bash -c '${KILL_SCREAM_SHELL_COMMAND}'" TERM
 # EXIT HUP INT QUIT ABRT KILL TERM
 
 function run_scream() {
-	/bin/bash -cx 'EXECUTABLE='"${OWN_DIR}"'/scream/Receivers/unix/build/scream; while date; ('"${KILL_SCREAM_SHELL_COMMAND}"'); $EXECUTABLE -v -u -d "sysdefault:CARD=AUDIO" -p 4011 | egrep "Device or resource busy" || sleep 1; do true; done'
+	/bin/bash -cx 'while (date && ('"${KILL_SCREAM_SHELL_COMMAND}"' || true) && ('"${EXECUTABLE}"' -v -u -d "sysdefault:CARD=AUDIO" -p 4011 || sleep 1)); do true; done'
 }
 
 function get_udp_port_queue() {
