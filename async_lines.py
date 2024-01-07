@@ -22,8 +22,9 @@ class SubprocessLineDialogue():
 
             if output is not None:
                 line = output.decode('utf-8')
-                if line[-1] == '\n':
+                if len(line) > 0 and line[-1] == '\n':
                     line = line[:-1]
+                print('line ', line)
                 yield line
 
             try:
