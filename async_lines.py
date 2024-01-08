@@ -1,6 +1,7 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Tuple, Optional
+from typing import Sequence, Optional, Tuple, List
+
 
 @dataclass
 class SubprocessLineDialogue():
@@ -8,39 +9,38 @@ class SubprocessLineDialogue():
     _timeout_seconds: float = 1.0
     _termination_ordered: bool = False
 
-    async def get_lines(self):
+    async def conduct(self, send_lines: Sequence[str] = (), order_termination: bool=False):
+        # One way
+        self._termination_ordered = self._termination_ordered or order_termination
+
+        for line in send_lines:
+            self._proc.stdin.write(line.encode('utf-8') + b'\n')
+        await self._proc.stdin.drain()
+
         while True:
+            try:
+                await asyncio.wait_for(self._proc.wait(), timeout=0.1)
+                break
+            except TimeoutError:
+                pass
+            
             output = None
-            await self._proc.stdin.drain()
             try:
                 output = await asyncio.wait_for(self._proc.stdout.readline(), timeout=self._timeout_seconds)
             except TimeoutError:
                 if self._termination_ordered:
                     self._proc.terminate()
-                else:
-                    continue
-
+                break
+    
             if output is not None:
                 line = output.decode('utf-8')
                 if len(line) > 0 and line[-1] == '\n':
                     line = line[:-1]
                 print('line ', line)
                 yield line
-
-            try:
-                await asyncio.wait_for(self._proc.wait(), timeout=0.1)
-                return
-            except TimeoutError:
-                pass
+    
    
         
-    def send_line(self, line: Optional[str]):
-        if line is None:
-            self._termination_ordered = True
-        else:
-            self._proc.stdin.write(line.encode('utf-8') + b'\n')
-
-
 async def start_dialogue(cmd: Tuple[str, ...]):
     process = await asyncio.create_subprocess_shell(
         cmd,
@@ -59,7 +59,7 @@ async def _test_start_dialogue():
     x.send_line('hello2')
     x.send_line('hello3')
 
-    async for element in x.get_lines():
+    async for element in x.conduct_dialogue():
         print(element)
         if '3' in element:
             x.send_line(None)
