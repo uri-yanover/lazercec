@@ -22,7 +22,6 @@ class SubprocessLineDialogue():
         await self._proc.stdin.drain()
 
         while True:
-           
             output = None
             try:
                 output = await asyncio.wait_for(self._proc.stdout.readline(), timeout=self._timeout_seconds)

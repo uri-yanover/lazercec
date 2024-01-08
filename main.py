@@ -52,8 +52,10 @@ async def main_loop(configuration_file_name):
         is_source_up = get_source_status(configuration_file_name)
 
         if (is_source_up, tv_status) == (True, 'standby'):
+            _LOGGER.info('Source up, TV standby. Turning TV on.')
             await set_tv_on(dialogue)
         elif (is_source_up, tv_status) == (False, 'on'):
+            _LOGGER.info('Source down, TV on. Setting TV to standby.')
             await set_tv_standby(dialogue)
 
 @dataclass
