@@ -1,6 +1,10 @@
 import asyncio
 from dataclasses import dataclass
 from typing import Sequence, Optional, Tuple, List
+from logging import getLogger
+
+
+_LOGGER = getLogger(__name__)
 
 
 @dataclass
@@ -18,12 +22,7 @@ class SubprocessLineDialogue():
         await self._proc.stdin.drain()
 
         while True:
-            try:
-                await asyncio.wait_for(self._proc.wait(), timeout=0.1)
-                break
-            except TimeoutError:
-                pass
-            
+           
             output = None
             try:
                 output = await asyncio.wait_for(self._proc.stdout.readline(), timeout=self._timeout_seconds)
@@ -36,10 +35,14 @@ class SubprocessLineDialogue():
                 line = output.decode('utf-8')
                 if len(line) > 0 and line[-1] == '\n':
                     line = line[:-1]
-                print('line ', line)
+                _LOGGER.debug('line %s', line)
                 yield line
     
-   
+        try:
+            await asyncio.wait_for(self._proc.wait(), timeout=0.1)
+        except TimeoutError:
+            pass
+    
         
 async def start_dialogue(cmd: Tuple[str, ...]):
     process = await asyncio.create_subprocess_shell(
