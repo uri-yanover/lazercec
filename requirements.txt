@@ -1,4 +1,3 @@
 cec
 click
-click_log
 dataclasses

@@ -6,12 +6,10 @@ from dataclasses import dataclass, field
 from time import sleep
 from typing import Callable, Optional
 import logging
-import click_log
 import asyncio
 from async_lines import start_dialogue
 
 _LOGGER = logging.getLogger(__name__)
-click_log.basic_config(_LOGGER)
 
 
 async def get_tv_status(dialogue):
@@ -71,16 +69,21 @@ def get_source_status(configuration_file_name: str):
     with open(configuration_file_name, 'rt') as configuration_file:
         configuration = _Configuration(**load(configuration_file))
 
-        outcome = subprocess.run(configuration.poll_shell_script, shell=True)
+        outcome = subprocess.run(configuration.poll_shell_script, shell=True, capture_output=True)
         _LOGGER.debug(f'Check outcome is {outcome}')
 
         return outcome.returncode == 0
 
 
+def _logging_levelstr_to_level(levelstr: str):
+    return logging.getLevelNamesMapping()[levelstr]
+
+
 @click.command()
-@click_log.simple_verbosity_option(logger=_LOGGER)
+@click.option('-v', '--logging-level', type=_logging_levelstr_to_level, help='Logging level', default='INFO')
 @click.option('-c', '--configuration', 'configuration_file_name', type=click.Path(), help='JSON configuration file')
-def main(configuration_file_name: str):
+def main(configuration_file_name: str, logging_level):
+    logging.basicConfig(level=logging_level)
     asyncio.get_event_loop().run_until_complete(main_loop(configuration_file_name))
 
 if __name__ == '__main__':
