@@ -2,7 +2,7 @@ import asyncio
 from dataclasses import dataclass
 from typing import Sequence, Optional, Tuple, List
 from logging import getLogger
-
+from time import monotonic
 
 _LOGGER = getLogger(__name__)
 
@@ -10,10 +10,10 @@ _LOGGER = getLogger(__name__)
 @dataclass
 class SubprocessLineDialogue():
     _proc: asyncio.subprocess.Process
-    _timeout_seconds: float = 1.0
     _termination_ordered: bool = False
 
-    async def conduct(self, send_lines: Sequence[str] = (), order_termination: bool=False):
+    async def conduct(self, send_lines: Sequence[str] = (), order_termination: bool=False, timeout_seconds = 5.0):
+        start_time = monotonic()
         # One way
         self._termination_ordered = self._termination_ordered or order_termination
 
@@ -24,11 +24,15 @@ class SubprocessLineDialogue():
         while True:
             output = None
             try:
-                output = await asyncio.wait_for(self._proc.stdout.readline(), timeout=self._timeout_seconds)
+                remaining_time = start_time + timeout_seconds - monotonic()
+                if remaining_time < 0:
+                    break
+                output = await asyncio.wait_for(self._proc.stdout.readline(), timeout=remaining_time)
             except TimeoutError:
-                if self._termination_ordered:
-                    self._proc.terminate()
-                break
+                pass
+                
+            if self._termination_ordered:
+                self._proc.terminate()
     
             if output is not None:
                 line = output.decode('utf-8')

@@ -17,10 +17,13 @@ click_log.basic_config(_LOGGER)
 async def get_tv_status(dialogue):
     async for line in dialogue.conduct(('pow 0',)):
         split_line = line.split('power status: ', 1)
+        result = None
         if len(split_line) == 2:
             _LOGGER.debug('reported status %s', split_line[1])
-            return split_line[1]
-    # Can return: 'on', 'standby', 'in transition from standby to on'
+            result = split_line[1]
+
+    return result
+    # Can return: 'on', 'standby', 'in transition from standby to on', 'in transition from on to standby'
 
 async def set_tv_on(dialogue):
     async for _ in dialogue.conduct(('on 0',)):
@@ -29,7 +32,7 @@ async def set_tv_on(dialogue):
     await asyncio.sleep(15)
     status = await get_tv_status(dialogue)
     if status != 'on':
-        raise RuntimeError('TV not on')
+        raise RuntimeError(f'TV not on, status={status}')
     async for line in dialogue.conduct(('tx 1F:82:20:00',)):  # Switch input source
         if line == 'waiting for input':
             return
@@ -38,7 +41,7 @@ async def set_tv_standby(dialogue):
     async for _ in dialogue.conduct(('standby 0',)):
         pass
     await get_tv_status(dialogue)
-    await asyncio.sleep(10)
+    await asyncio.sleep(15)
     status = await get_tv_status(dialogue)
     if status != 'standby':
         raise RuntimeError(f'TV not off, status={status}')
