@@ -83,7 +83,7 @@ def _logging_levelstr_to_level(levelstr: str):
 @click.option('-v', '--logging-level', type=_logging_levelstr_to_level, help='Logging level', default='INFO')
 @click.option('-c', '--configuration', 'configuration_file_name', type=click.Path(), help='JSON configuration file')
 def main(configuration_file_name: str, logging_level):
-    logging.basicConfig(level=logging_level)
+    logging.basicConfig(level=logging_level, format='%(asctime)s %(levelname)-8s %(message)s')
     asyncio.get_event_loop().run_until_complete(main_loop(configuration_file_name))
 
 if __name__ == '__main__':
