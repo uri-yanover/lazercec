@@ -13,9 +13,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def get_tv_status(dialogue):
+    result = None
     async for line in dialogue.conduct(('pow 0',)):
         split_line = line.split('power status: ', 1)
-        result = None
         if len(split_line) == 2:
             _LOGGER.debug('reported status %s', split_line[1])
             result = split_line[1]
@@ -45,12 +45,24 @@ async def set_tv_standby(dialogue):
         raise RuntimeError(f'TV not off, status={status}')
  
 async def main_loop(configuration_file_name):
-    dialogue = await start_dialogue('/usr/bin/cec-client')
-    
+    _LOGGER.info('Starting execution loop')
+    counter = 0
+    dialogue = None
+
     while True:
         await asyncio.sleep(1)
-        tv_status = await get_tv_status(dialogue)
+        tv_status = None if dialogue is None else await get_tv_status(dialogue)
+        if tv_status is None:
+            dialogue = await start_dialogue('/usr/bin/cec-client')
+
+        _LOGGER.info('Initial TV status %s', tv_status)
+
         is_source_up = get_source_status(configuration_file_name)
+
+        if counter % 100 == 0:
+            _LOGGER.info('Source up=%s / TV status=%s', is_source_up, tv_status)
+            counter = 0
+        counter += 1
 
         if (is_source_up, tv_status) == (True, 'standby'):
             _LOGGER.info('Source up, TV standby. Turning TV on.')
