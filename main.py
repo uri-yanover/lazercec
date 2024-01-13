@@ -62,8 +62,7 @@ async def main_loop(configuration_file_name):
         tv_status = None if dialogue is None else await get_tv_status(dialogue)
         if tv_status is None:
             dialogue = await start_dialogue("/usr/bin/cec-client")
-
-        _LOGGER.info("Initial TV status %s", tv_status)
+            continue  # Restart
 
         is_source_up = get_source_status(configuration_file_name)
 
