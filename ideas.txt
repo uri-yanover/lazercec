@@ -1,0 +1,12 @@
+cec-o-matic.com
+
+
+> tx 01:90
+give current power status
+
+transition tv to the right input
+> 1F:82:20:00 
+
+on 0
+standby 0
+pow 0
