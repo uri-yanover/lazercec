@@ -17,6 +17,6 @@ bash -c "${KILL_COMMAND}" || /bin/true
 
 trap "{ ${KILL_COMMAND} }" SIGINT SIGTERM SIGKILL
 
-python3 "${OWN_PATH}/main.py" -v DEBUG --configuration "${OWN_PATH}/config.json"
+python3 "${OWN_PATH}/main.py" -v INFO --configuration "${OWN_PATH}/config.json"
 
 exit $?

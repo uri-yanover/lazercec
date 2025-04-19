@@ -2,9 +2,9 @@
 Lazy tool to turn off/on a TV based on an arbitrary condition.
 
 Some ideas:
-* `nmblookup <hostname>`
+* `nmblookup <hostname>` (requires apt -y install samba)
 * `ping <hostname> -c 1 -w 1`
-* `(! ping -n -t 1 -c 1 192.168.1.1)`
+* `(! ping -n -t 1 -c 1 <YOUR router address>)`
 
 Useful links:
 * https://ubuntu-mate.community/t/controlling-raspberry-pi-with-tv-remote-using-hdmi-cec/4250
