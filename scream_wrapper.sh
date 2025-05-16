@@ -9,7 +9,8 @@ trap "bash -c '${KILL_SCREAM_SHELL_COMMAND}'" TERM
 # EXIT HUP INT QUIT ABRT KILL TERM
 
 function run_scream() {
-	/bin/bash -cx 'while (date && ('"${KILL_SCREAM_SHELL_COMMAND}"' || true) && ('"${EXECUTABLE}"' -v -u -d "sysdefault:CARD=AUDIO" -p 4011 || sleep 1)); do true; done'
+#	/bin/bash -cx 'while (date && ('"${KILL_SCREAM_SHELL_COMMAND}"' || true) && ('"${EXECUTABLE}"' -v -u -d "dmix:CARD=AUDIO,DEV=0" -p 4011 || sleep 1)); do true; done'
+/bin/bash -cx 'while (date && ('"${KILL_SCREAM_SHELL_COMMAND}"' || true) && ('"${EXECUTABLE}"' -v -u -o pulse -d "USB Audio" -p 4011 || sleep 1)); do true; done'
 }
 
 function get_udp_port_queue() {
