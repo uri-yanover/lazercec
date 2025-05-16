@@ -38,24 +38,32 @@ function get_state() {
 	esac
 }
 
-PREV_STATE="INITIAL"
+PREV_STATE="NO_SCREAM"
 
-run_scream & SCREAM_PID=$!
+while ! pactl info; do
+	echo 'No PulseAudio available yet, retrying'
+	sleep 5
+done
 
+run_scream & disown
 
 while sleep 1; do
 	NEW_STATE="$(get_state)"
 
 	TRANSITION="${PREV_STATE}_to_${NEW_STATE}"
+		
 	
-	if [ "${PREV_STATE}" != "${NEW_STATE}" ]; then
-		date
-		echo "Transition ${TRANSITION}" 
+	if [ "${PREV_STATE}" == "${NEW_STATE}" ]; then
+		continue
 	fi
-
+		
+	
+	date
 	if [[ "${TRANSITION}" = 'YES_SOUND_to_NO_SOUND' ]]; then
-		echo "Restarting"
+		echo "Restarting" 1>&2
 		bash -c "${KILL_SCREAM_SHELL_COMMAND}"
 	fi
 	PREV_STATE="${NEW_STATE}"
 done
+
+

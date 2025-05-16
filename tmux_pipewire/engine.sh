@@ -23,12 +23,14 @@ kill_session() {
 start_session() {
   echo "Starting detached tmux session: $SESSION_NAME"
   tmux new-session -d -s "$SESSION_NAME"
-
   CURRENT_INDEX=1
   # Create new windows and run commands
   for WINDOW_COMMAND in "${WINDOW_COMMANDS[@]}"; do
 	TAG="$(echo "${WINDOW_COMMAND}" | egrep -o '/[-/A-Za-z0-9_]+' | head -n 1 | sed -r 's/.*[/]//g')"
-	tmux new-window -t "${SESSION_NAME}:${CURRENT_INDEX}" -n "${TAG}" "($WINDOW_COMMAND) | tee ${LOGS_DIR}/${TAG}.log 2>&1"
+	tmux new-window -t "${SESSION_NAME}:${CURRENT_INDEX}" -n "${TAG}" "sleep 1 && ($WINDOW_COMMAND)" 
+	LOG_FILE="${LOGS_DIR}/${TAG}.log" 
+	savelog -9 "${LOG_FILE}"
+	tmux pipe-pane -o -t "${SESSION_NAME}:${CURRENT_INDEX}" "cat - > '${LOG_FILE}'"	
 	CURRENT_INDEX=$(expr "${CURRENT_INDEX}" '+' 1)
   done
 
