@@ -4,7 +4,7 @@
 SESSION_NAME="pipewire"
 
 # Define the commands to run in each window
-WINDOW_COMMANDS=('/usr/bin/pipewire' 'sleep 3 && /usr/bin/wireplumber' 'sleep 5 && /usr/bin/pipewire-pulse')
+WINDOW_COMMANDS=('/usr/bin/pipewire' 'sleep 3 && /usr/bin/wireplumber' 'sleep 5 && /usr/bin/pipewire-pulse' '/opt/lazer/spotifyd/run_spotifyd.sh')
 LOGS_DIR="/var/log/pipewire"
 
 # Function to check if a tmux session exists
@@ -27,7 +27,7 @@ start_session() {
   CURRENT_INDEX=1
   # Create new windows and run commands
   for WINDOW_COMMAND in "${WINDOW_COMMANDS[@]}"; do
-	TAG="$(echo "${WINDOW_COMMAND}" | egrep -o '/usr/bin/[-A-Za-z0-9_]+' | cut -d '/' -f 4- | head -n 1)"
+	TAG="$(echo "${WINDOW_COMMAND}" | egrep -o '/usr/bin/[-A-Za-z0-9_]+' | sed -r 's/.*[/]//g' | head -n 1)"
 	tmux new-window -t "${SESSION_NAME}:${CURRENT_INDEX}" -n "${TAG}" "($WINDOW_COMMAND) | tee ${LOGS_DIR}/${TAG}.log 2>&1"
 	CURRENT_INDEX=$(expr "${CURRENT_INDEX}" '+' 1)
   done
