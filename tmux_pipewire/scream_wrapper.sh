@@ -23,7 +23,8 @@ function get_udp_port_queue() {
 
 function get_state() {
 	TESTS="x-$(get_udp_port_queue 4011)-$(get_udp_port_queue 4011)-$(get_udp_port_queue 4011)" 
-	
+	# echo "${TESTS}" 1>&2
+
 	case "${TESTS}" in
 		x-0-0-0)
 			echo "NO_SOUND"
@@ -50,15 +51,13 @@ run_scream & disown
 while sleep 1; do
 	NEW_STATE="$(get_state)"
 
-	TRANSITION="${PREV_STATE}_to_${NEW_STATE}"
-		
-	
 	if [ "${PREV_STATE}" == "${NEW_STATE}" ]; then
 		continue
 	fi
 		
+	TRANSITION="${PREV_STATE}_to_${NEW_STATE}"
 	
-	date
+	echo "$(date)" "${TRANSITION}"
 	if [[ "${TRANSITION}" = 'YES_SOUND_to_NO_SOUND' ]]; then
 		echo "Restarting" 1>&2
 		bash -c "${KILL_SCREAM_SHELL_COMMAND}"
