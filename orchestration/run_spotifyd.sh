@@ -9,4 +9,6 @@ while ! pactl info; do
 	sleep 5
 done
 
-"${OWN_DIR}/spotifyd/spotifyd" --backend pulseaudio --device 'USB AUDIO' --device-name 'Sunet Bun' --no-daemon
+while true; do
+	"${OWN_DIR}/spotifyd/spotifyd" --backend pulseaudio --device 'USB AUDIO' --device-name 'Sunet Bun' --no-daemon
+done

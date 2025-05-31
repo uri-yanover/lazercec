@@ -21,18 +21,21 @@ function get_udp_port_queue() {
 	# UNCONN 18368  0             0.0.0.0:4011        0.0.0.0:*
 }
 
+shopt -s extglob
+# https://stackoverflow.com/questions/4554718/how-to-use-patterns-in-a-case-statement
+
 function get_state() {
-	TESTS="x-$(get_udp_port_queue 4011)-$(get_udp_port_queue 4011)-$(get_udp_port_queue 4011)" 
+	TESTS="x-$(get_udp_port_queue 4011)-$(sleep 1 && get_udp_port_queue 4011)-$(sleep 1 && get_udp_port_queue 4011)-$(sleep 1 && get_udp_port_queue 4011)" 
 	# echo "${TESTS}" 1>&2
 
 	case "${TESTS}" in
-		x-0-0-0)
-			echo "NO_SOUND"
-			;;
-		x---)
+		x----)
 			echo "NO_SCREAM"
 			;;
 
+		x-?(0)-?(0)-0-0)
+			echo "NO_SOUND"
+			;;
 		*)
 			echo "YES_SOUND"
 			;;
