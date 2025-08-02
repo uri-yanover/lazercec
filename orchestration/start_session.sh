@@ -1,3 +1,5 @@
 #!/bin/bash
 
-ssh -i ~/.ssh/own_host "${USER}@localhost"
+set -e -x
+
+ssh -i ~/.ssh/own_host "pi@localhost"

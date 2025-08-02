@@ -14,9 +14,5 @@ if [ -z "${CARD}" ]; then
     exit 1
 fi
 
-
-while true; do
-	amixer -c "${CARD}" set 'PCM' '80%'
-	timeout 600 alsamixer -c "${CARD}"
-done
-
+amixer -c "${CARD}" set 'PCM' '80%'
+alsamixer -c "${CARD}"
