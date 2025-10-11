@@ -9,6 +9,8 @@ while ! pactl info; do
 	sleep 5
 done
 
+EXECUTABLE="${OWN_DIR}/spotifyd/spotifyd" 
 while true; do
-	bash -x "${OWN_DIR}"/run_until.sh 'tomorrow 3am' "${OWN_DIR}/spotifyd/spotifyd" --backend pulseaudio --device 'USB AUDIO' --device-name 'Sunet Bun' --no-daemon
+	pkill -9 -f "^${EXECUTABLE}"
+	bash -x "${OWN_DIR}"/run_until.sh 'tomorrow 3am' "${EXECUTABLE}" --backend pulseaudio --device 'USB AUDIO' --device-name 'Sunet Bun' --no-daemon
 done

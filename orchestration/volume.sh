@@ -14,5 +14,5 @@ if [ -z "${CARD}" ]; then
     exit 1
 fi
 
-amixer -c "${CARD}" set 'PCM' '80%'
+(sleep 60 && amixer -c "${CARD}" set 'PCM' '80%') &
 alsamixer -c "${CARD}"
