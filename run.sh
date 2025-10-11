@@ -11,7 +11,7 @@ date 1>&2
 # TODO: move into the Python
 echo 'is' | cec-client -s
 
-KILL_COMMAND="pkill -f '${OWN_PATH}'/main.py"
+KILL_COMMAND="pkill -9 -f '${OWN_PATH}'/main.py"
 
 bash -c "${KILL_COMMAND}" || /bin/true
 

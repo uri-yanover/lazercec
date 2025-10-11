@@ -59,10 +59,18 @@ async def main_loop(configuration_file_name):
 
     while True:
         await asyncio.sleep(1)
-        tv_status = None if dialogue is None else await get_tv_status(dialogue)
-        if tv_status is None:
+
+        if dialogue is None:
             dialogue = await start_dialogue("/usr/bin/cec-client")
+            
+        tv_status = await get_tv_status(dialogue)
+        if tv_status is None:
+            await dialogue.conduct(order_termination=True)
+            await asyncio.sleep(5)
+            dialogue = None
             continue  # Restart
+
+            # dialogue = await start_dialogue(("/usr/bin/env", "bash", "-c", "timeout 60 /usr/bin/cec-client",))
 
         is_source_up = get_source_status(configuration_file_name)
 

@@ -54,7 +54,7 @@ class SubprocessLineDialogue:
             pass
 
 
-async def start_dialogue(cmd: Tuple[str, ...]):
+async def start_dialogue(cmd: Tuple[str, ...]) -> SubprocessLineDialogue:
     _LOGGER.info("Starting dialogue, command is %s", cmd)
     process = await asyncio.create_subprocess_shell(
         cmd,
