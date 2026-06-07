@@ -21,16 +21,17 @@ BUDGET_MINS=0
 while true; do
         # Safely capture amixer output. Using 'set +e' inside a subshell or 
         # simply removing global 'set -e' makes this safe.
-        AMIX_OUT=$(amixer -c "${CARD}" sget PCM 2>/dev/null | grep -E 'Front|Master' | egrep -o '[0-9]+%' | paste -s -d ' ')
 
-        if [ "${AMIX_OUT}" = "80% 80%" ] || [ "${AMIX_OUT}" = "80%" ] || [ "${BUDGET_MINS}" -gt 0 ] ; then
-                sleep 60
-                # Use Bash arithmetic $((...)) instead of 'expr' to avoid the exit-status-0 trap
-                BUDGET_MINS=$(( BUDGET_MINS - 1 ))
-        else
+	if [[ "${BUDGET_MINS}" -le 0 ]]; then
                 echo "Resetting sound"
                 date
                 BUDGET_MINS=240
-                amixer -c "${CARD}" set 'PCM' '80%'
+                amixer -c "${CARD}" set 'PCM' '80%' 
+	fi
+        AMIX_OUT=$(amixer -c "${CARD}" sget PCM 2>/dev/null | grep -E 'Front|Master' | egrep -o '[0-9]+%' | paste -s -d ' ' | sed -r 's/\s+/ /g')
+
+	if [ "${AMIX_OUT}" != "80% 80%" ]; then
+                sleep 60
+                BUDGET_MINS=$(( BUDGET_MINS - 1 ))
         fi
 done
