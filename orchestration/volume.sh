@@ -31,7 +31,7 @@ while true; do
         AMIX_OUT=$(amixer -c "${CARD}" sget PCM 2>/dev/null | grep -E 'Front|Master' | egrep -o '[0-9]+%' | paste -s -d ' ' | sed -r 's/\s+/ /g')
 
 	if [ "${AMIX_OUT}" != "80% 80%" ]; then
-                sleep 60
                 BUDGET_MINS=$(( BUDGET_MINS - 1 ))
         fi
+        sleep 60
 done

@@ -14,7 +14,8 @@ done
 #
 # Currently working: 0.47.1 from https://github.com/dtcooper/raspotify/releases
 #EXECUTABLE="/usr/bin/librespot"
-EXECUTABLE="/home/pi/librespot/librespot-git/target/release/librespot"
+# EXECUTABLE="/home/pi/librespot/librespot-git/target/release/librespot"
+EXECUTABLE='/usr/bin/librespot'
 while true; do
 	pkill -9 -f "^${EXECUTABLE}"
 	# spotifyd semantics
